@@ -17,7 +17,6 @@ php::module { ["mysql", "gd", "mcrypt", "imagick", "curl"]:
 
 # Install mysql
 class { 'mysql::server':
-	root_password => '',
 	override_options => {
 		mysqld => {
 			bind_address => '0.0.0.0'
@@ -35,14 +34,23 @@ class { 'mysql::server':
 }
 
 # Install composer
-class composer {
+class custom {
+	# Install composer
 	exec { 'composer_install':
 		command => 'curl -sS https://getcomposer.org/installer | php && sudo mv composer.phar /usr/local/bin/composer',
 		path    => '/usr/bin:/usr/sbin',
 		require => Package['curl'],
 	}
+
+	# Generate SSH key for vagrant user
+	exec { "ssh_keygen-vagrant":
+		command => "ssh-keygen -t rsa -f \"/home/vagrant/.ssh/id_rsa\" -N ''",
+		user    => "vagrant",
+		creates => "/home/vagrant/.ssh/id_rsa",
+	}
+
 }
-include composer
+include custom
 
 # Include vhosts
 import 'vhosts/*.pp'
