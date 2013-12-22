@@ -29,7 +29,13 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "../../vhosts", "/var/www/vhosts", owner: "vagrant", group: "www-data", mode: "775"
+  # Si el host es un Windows, mejora un poco usar una conexíon por samba
+  # config.vm.synced_folder "../../../vhosts", "/var/www/vhosts", owner: "vagrant", group: "www-data", mode: "775"
+  # Samba mount example:
+  #sudo mount -t cifs -o umask=0002,mode=0775,dir_mode=0775,gid=33,uid=33 //192.168.56.1/vhosts /var/www/vhosts
+  # Permanent mount in /etc/fstab:
+  # //192.168.56.1/vhosts /var/www/vhosts cifs umask=0002,mode=0775,dir_mode=0775,gid=33,uid=33 0 0
+
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
